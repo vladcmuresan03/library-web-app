@@ -7,5 +7,7 @@ The client can see the available books of the library, details about each book, 
 The librarian can modify, add, remove any details of any book of the library (such as name, image, description, quantity etc.), modify user details, modify, add or delete reservations.
 
 Technologies used:
+
 Backend: Python, Flask, SQLite, SQLAlchemy;
+
 Frontend: HTML, Jinja, CSS;
