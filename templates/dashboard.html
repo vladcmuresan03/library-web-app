@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome, {{ session['username'] }}!</h1>
+    <p>Your role is <i>{{ session['role'] }}</i>, your ID is: {{ session['user_id'] }}</p>
+
+    <div>
+        <a href="{{ url_for('change_username') }}" style="text-decoration: none;">
+            <button>Change Username</button>
+        </a>
+    </div>
+    <br>
+    <div>
+        <a href="{{ url_for('change_password') }}" style="text-decoration: none;">
+            <button>Change Password</button>
+        </a>
+    </div>
+    <br>
+    <div>
+        <form method="POST" action="{{ url_for('delete_account') }}">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.')">Delete Account</button>
+        </form>
+    </div>
+
+{% endblock %}

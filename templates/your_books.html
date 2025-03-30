@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Borrowed Books</h1>
+
+<!-- librarian's reservation search by ID -->
+{% if is_librarian %}
+<div class="librarian-tools">
+
+     <h2>
+        <a href="{{ url_for('create_reservation') }}" style="font-weight: bold; color: blue; cursor: pointer;">
+            Create a New Reservation
+        </a>
+    </h2>
+
+    <h2>Modify Reservations</h2>
+    <form method="POST" action="{{ url_for('search_reservation') }}">
+        <label for="search_id">Search Reservation by ID:</label>
+        <input type="number" name="search_id" id="search_id" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if selected_reservation %}
+    <div class="reservation-edit">
+        <h3>Editing Reservation #{{ selected_reservation['reservation_id'] }}</h3>
+        <form method="POST" action="{{ url_for('update_reservation') }}">
+            <input type="hidden" name="reservation_id" value="{{ selected_reservation['reservation_id'] }}">
+
+            <label for="reservation_date">Start Date:</label>
+            <input type="datetime-local" name="reservation_date"
+                   value="{{ selected_reservation['reservation_date']|replace(' ', 'T') }}" required>
+
+            <br/>
+
+            <label for="return_date">End Date: </label>
+            <input type="datetime-local" name="return_date"
+                   value="{{ selected_reservation['return_date']|replace(' ', 'T') if selected_reservation['return_date'] else '' }}">
+
+            <br/>
+
+            <label for="is_returned_yes">Returned Status:</label><br>
+            <input type="radio" id="is_returned_yes" name="is_returned" value="1"
+                {% if selected_reservation['is_returned'] == 1 %}checked{% endif %}>
+            <label for="is_returned_yes">Yes</label><br>
+
+            <input type="radio" id="is_returned_no" name="is_returned" value="0"
+                {% if selected_reservation['is_returned'] == 0 %}checked{% endif %}>
+            <label for="is_returned_no">No</label><br>
+
+            <button type="submit">Save</button>
+            <a href="{{ url_for('your_books') }}">
+                <button type="button">Cancel</button>
+            </a>
+            </br>
+            <button type="button" onclick="confirmDelete({{ selected_reservation['reservation_id']}})" style="background-color: red; color: white;">
+                Delete Reservation
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <script>
+    function confirmDelete(reservationId) {
+        if (confirm("Are you sure you want to delete this reservation?")) {
+            window.location.href = "{{ url_for('delete_reservation', reservation_id=0) }}".replace('0', reservationId);
+        }
+    }
+    </script>
+
+</div>
+{% endif %}
+
+<!-- display reservations -->
+<div class="reservation-list">
+    {% for reservation in reservation_info %}
+    <div class="reservation-card {% if reservation.overdue %} overdue {% endif %}">
+        <h3>
+            <a href="{{ url_for('book_details', book_id=reservation.book_id) }}">{{ reservation.title }}</a>
+        </h3>
+        <p><strong>Reservation Period:</strong> {{ reservation.reservation_period }}</p>
+        <p>
+            <strong>Returned:</strong>
+            {% if reservation.is_returned %}
+                <span style="color: green;">Yes</span>
+            {% else %}
+                <span style="color: {% if reservation.overdue %} red {% else %} orange {% endif %};">
+                    No
+                </span>
+            {% endif %}
+        </p>
+        <p><strong>Reservation ID: </strong>{{ reservation.reservation_id }}</p>
+
+
+        {% if is_librarian %}
+        <p><strong>User ID:</strong> {{ reservation.user_id }}</p>
+        <p><strong>Username:</strong> {{ reservation.username }}</p>
+        {% elif reservation.overdue %}
+        <p style="color: red;">Please return your book as soon as possible!</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

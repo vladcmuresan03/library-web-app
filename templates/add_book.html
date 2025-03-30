@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Add a New Book</h1>
+<form method="POST" action="{{ url_for('add_book') }}" enctype="multipart/form-data">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required>
+    
+    <br>
+
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" required>
+
+    <br>
+
+    <label for="genre">Genre:</label>
+    <input type="text" id="genre" name="genre" required>
+
+    <br>
+
+    <label for="picture">Upload Picture (optional):</label>
+    <input type="file" id="picture" name="picture" accept=".jpg, .png" onchange="validateFile()">
+
+    <br>
+    
+    <button type="submit">Add Book</button>
+    <a href="{{ url_for('view_books') }}">
+        <button type="button">Cancel</button>
+    </a>
+</form>
+<script>
+function validateFile() {
+    const fileInput = document.getElementById('picture');
+    const file = fileInput.files[0];
+    if (file) {
+        const allowedTypes = ['image/png', 'image/jpeg'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Invalid file type. Only PNG and JPG are allowed.');
+            fileInput.value = '';
+        }
+    }
+}
+</script>
+{% endblock %}

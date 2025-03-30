@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% if is_librarian %}
+    <div>
+        <h1><a href="{{ url_for('add_book') }}" style="text-decoration: underline; color: blue; cursor: pointer;">
+        Add a new book
+        </a></h1>
+    </div>
+    {% endif %}
+
+    <h1>Available Books</h1>
+
+    <div class="book-grid">
+        {% for book in books %}
+        <div class="book-card {% if book['is_available'] == 0 %} unavailable {% endif %}">
+            <!-- displaying the image for the book -->
+            <img src="{{ url_for('static', filename='images/' + (book['image_filename'] if book['image_filename'] else 'default_book.png')) }}"
+                 alt="{{ book['title'] }}" class="book-image">
+
+            <!-- book information -->
+            <h3>{{ book['title'] }}</h3>
+            <p><strong>Author:</strong> {{ book['author'] }}</p>
+            <p><strong>Genre:</strong> {{ book['genre'] }}</p>
+
+            <!-- button for book details page -->
+            <a href="{{ url_for('book_details', book_id=book['id']) }}">
+                <button>More Info</button>
+            </a>
+
+            {% if book['is_available'] == 0 %}
+            <div class="unavailable-overlay">
+                Unavailable
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
